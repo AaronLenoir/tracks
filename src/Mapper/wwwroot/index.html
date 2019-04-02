@@ -45,7 +45,7 @@
         function drawTrack(track) {
             let coordinates = track.points.map(p => [p.lat.toFixed(5), p.lon.toFixed(5)]);
 
-            var polyline = L.polyline(coordinates, { color: 'red' }).addTo(mymap);
+            var polyline = L.polyline(coordinates, { weight: 6, color: 'darkred' }).addTo(mymap);
 
             // zoom the map to the polyline
             mymap.fitBounds(polyline.getBounds());
