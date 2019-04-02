@@ -34,6 +34,10 @@ namespace Mapper
                 app.UseDeveloperExceptionPage();
             }
 
+            // Will ensure files from wwwroot are served
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
+
             app.UseMvc();
         }
     }
