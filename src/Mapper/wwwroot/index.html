@@ -40,23 +40,9 @@
                 let gpx = new gpxParser();
                 gpx.parse(gpxData); 
 
-                for (let i = 0; i < gpx.tracks[0].points.length; i++) {
-                    let point = gpx.tracks[0].points[i];
+                let coordinates = gpx.tracks[0].points.map(p => [p.lat.toFixed(5), p.lon.toFixed(5)]);
 
-                    console.log(point);
-                    let lat = point.lat.toFixed(5);
-                    let lon = point.lon.toFixed(5);
-
-
-                    let circle = L.circle([lat, lon], {
-                        color: 'red',
-                        fillColor: '#f03',
-                        fillOpacity: 0.5,
-                        radius: 5
-                    }).addTo(mymap);
-
-                    console.log(point);
-                }
+                var polyline = L.polyline(coordinates, { color: 'red' }).addTo(mymap);
             });
     </script>
 </body>
