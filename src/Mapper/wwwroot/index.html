@@ -28,6 +28,15 @@
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
             maxZoom: 50
         }).addTo(mymap);
+
+        function drawTrack(track) {
+            let coordinates = track.points.map(p => [p.lat.toFixed(5), p.lon.toFixed(5)]);
+
+            var polyline = L.polyline(coordinates, { color: 'red' }).addTo(mymap);
+
+            // zoom the map to the polyline
+            mymap.fitBounds(polyline.getBounds());
+        }
     </script>
 
     <script>
@@ -42,14 +51,7 @@
                 let gpx = new gpxParser();
                 gpx.parse(gpxData); 
 
-                let coordinates = gpx.tracks[0].points.map(p => [p.lat.toFixed(5), p.lon.toFixed(5)]);
-
-                var polyline = L.polyline(coordinates, { color: 'red' }).addTo(mymap);
-
-                console.log(gpx.tracks[0].points);
-
-                // zoom the map to the polyline
-                mymap.fitBounds(polyline.getBounds());
+                drawTrack(gpx.tracks[0]);
             });
     </script>
 </body>
