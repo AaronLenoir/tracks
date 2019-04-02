@@ -15,8 +15,6 @@
     </style>
 </head>
 <body>
-    <h1>Hello world</h1>
-
     <div id="map"></div>
 
     <script src="js/lib/gpx-parser.js"></script>
@@ -24,16 +22,20 @@
             integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
             crossorigin=""></script>
     <script>
-        let mymap = L.map('map').setView([50.905, 5.201], 13);
+        let mymap = L.map('map');
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-            maxZoom: 18
+            maxZoom: 50
         }).addTo(mymap);
     </script>
 
     <script>
-        fetch('tracks/2019-03-27_17-36-47.gpx')
+        var url_string = window.location.href
+        var url = new URL(url_string);
+        var trackPath = url.searchParams.get("track");
+
+        fetch(trackPath)
             .then(function (response) {
                 return response.text();
             }).then(function (gpxData) {
@@ -43,6 +45,11 @@
                 let coordinates = gpx.tracks[0].points.map(p => [p.lat.toFixed(5), p.lon.toFixed(5)]);
 
                 var polyline = L.polyline(coordinates, { color: 'red' }).addTo(mymap);
+
+                console.log(gpx.tracks[0].points);
+
+                // zoom the map to the polyline
+                mymap.fitBounds(polyline.getBounds());
             });
     </script>
 </body>

@@ -11,7 +11,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "index.html",
+      "launchUrl": "index.html?track=tracks/2019-03-27_17-36-47.gpx",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

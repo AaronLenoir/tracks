@@ -114,6 +114,7 @@ gpxParser.prototype.parse = function (string) {
             pt.lat = parseFloat(trkpt.getAttribute("lat"));
             pt.lon = parseFloat(trkpt.getAttribute("lon"));
             pt.ele = parseFloat(keepThis.getElementValue(trkpt, "ele"));
+            pt.time = new Date(keepThis.getElementValue(trkpt, "time"));
             trackpoints.push(pt);
         }
         track.distance = keepThis.calculDistance(trackpoints);
