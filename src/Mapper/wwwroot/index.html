@@ -12,15 +12,28 @@
             height: 500px;
             width: 800px;
         }
+        #container {
+            min-width: 500px;
+            max-width: 800px;
+            height: 400px;
+        }
     </style>
 </head>
 <body>
     <div id="map"></div>
 
+    <div id="container"></div>
+
     <script src="js/lib/gpx-parser.js"></script>
     <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
             integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
             crossorigin=""></script>
+
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/series-label.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+
     <script>
         let mymap = L.map('map');
 
@@ -49,10 +62,69 @@
                 return response.text();
             }).then(function (gpxData) {
                 let gpx = new gpxParser();
-                gpx.parse(gpxData); 
+                gpx.parse(gpxData);
 
                 drawTrack(gpx.tracks[0]);
+                drawAltitudeChart(gpx.tracks[0]);
             });
+    </script>
+
+    <script>
+        function drawAltitudeChart(track) {
+
+            let dataPoints = track.points.map(p => [p.time, p.ele * 3.28084]);
+
+            console.log(dataPoints);
+
+            Highcharts.chart('container', {
+                chart: {
+                    type: 'area'
+                },
+                title: {
+                    text: 'Altitude (ft)'
+                },
+                subtitle: {
+                    text: 'Altitude en route'
+                },
+                xAxis: {
+                    type: 'datetime',
+                    dateTimeLabelFormats: { // don't display the dummy year
+                        month: '%e. %b',
+                        year: '%b'
+                    },
+                    title: {
+                        text: 'Date'
+                    }
+                },
+                yAxis: {
+                    title: {
+                        text: 'Altitude (ft)'
+                    }
+                },
+                tooltip: {
+                    headerFormat: '<b>{series.name}</b><br>',
+                    pointFormat: '{point.x:%e. %b %H:%M}: {point.y:.2f} ft'
+                },
+
+                plotOptions: {
+                    spline: {
+                        marker: {
+                            enabled: true
+                        }
+                    }
+                },
+
+                colors: ['#6CF', '#39F', '#06C', '#036', '#000'],
+
+                // Define the data points. All series have a dummy year
+                // of 1970/71 in order to be compared on the same x axis. Note
+                // that in JavaScript, months start at 0 for January, 1 for February etc.
+                series: [{
+                    name: "Altitude (ft)",
+                    data: dataPoints
+                }]
+            });
+        };
     </script>
 </body>
 
