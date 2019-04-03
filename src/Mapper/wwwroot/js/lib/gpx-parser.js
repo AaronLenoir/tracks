@@ -84,6 +84,13 @@ gpxParser.prototype.parse = function (string) {
             pt.lat = parseFloat(rtept.getAttribute("lat"));
             pt.lon = parseFloat(rtept.getAttribute("lon"));
             pt.ele = parseFloat(keepThis.getElementValue(rtept, "ele"));
+            pt.time = null;
+
+            let pointTime = keepThis.getElementValue(trkpt, "time");
+            if (pointTime) {
+                pt.time = new Date(pointTime);
+            }
+
             routepoints.push(pt);
         }
 
@@ -114,7 +121,13 @@ gpxParser.prototype.parse = function (string) {
             pt.lat = parseFloat(trkpt.getAttribute("lat"));
             pt.lon = parseFloat(trkpt.getAttribute("lon"));
             pt.ele = parseFloat(keepThis.getElementValue(trkpt, "ele"));
-            pt.time = new Date(keepThis.getElementValue(trkpt, "time"));
+            pt.time = null;
+
+            let pointTime = keepThis.getElementValue(trkpt, "time");
+            if (pointTime) {
+                pt.time = new Date(pointTime);
+            }
+
             trackpoints.push(pt);
         }
         track.distance = keepThis.calculDistance(trackpoints);

@@ -8,6 +8,10 @@
           integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
           crossorigin="" />
     <style>
+        h1 {
+            font-family: sans-serif;
+        }
+
         #map {
             height: 500px;
             width: 800px;
@@ -20,6 +24,8 @@
     </style>
 </head>
 <body>
+    <h1 id="track-name"></h1>
+
     <div id="map"></div>
 
     <div id="container"></div>
@@ -64,6 +70,10 @@
                 let gpx = new gpxParser();
                 gpx.parse(gpxData);
 
+                console.log(gpx.tracks[0].name);
+
+                document.getElementById("track-name").innerText = gpx.tracks[0].name;
+
                 drawTrack(gpx.tracks[0]);
                 drawAltitudeChart(gpx.tracks[0]);
             });
@@ -72,9 +82,7 @@
     <script>
         function drawAltitudeChart(track) {
 
-            let dataPoints = track.points.map(p => [p.time, p.ele * 3.28084]);
-
-            console.log(dataPoints);
+            let dataPoints = track.points.filter(p => p.time !== null).map(p => [p.time, p.ele * 3.28084]);
 
             Highcharts.chart('container', {
                 chart: {
