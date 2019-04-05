@@ -27,6 +27,8 @@
 
     <p>Total distance: <span id="totalDistance"></span> km</p>
 
+    <p>GPX Download: <a id="gpxDownload"></a></p>
+
     <div id="map"></div>
 
     <div class="chart" id="altitude"></div>
@@ -41,7 +43,6 @@
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="https://code.highcharts.com/modules/series-label.js"></script>
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
-    <script src="https://code.highcharts.com/modules/export-data.js"></script>
 
     <script>
         let mymap = L.map('map');
@@ -76,6 +77,9 @@
                 document.getElementById("track-name").innerText = gpx.tracks[0].name;
 
                 document.getElementById("totalDistance").innerText = (gpx.tracks[0].distance.total / 1000).toFixed(3);
+
+                document.getElementById("gpxDownload").innerText = trackPath;
+                document.getElementById("gpxDownload").setAttribute("href", trackPath);
 
                 drawTrack(gpx.tracks[0]);
                 drawAltitudeChart(gpx.tracks[0]);
