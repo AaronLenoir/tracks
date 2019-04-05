@@ -14,21 +14,24 @@
 
         #map {
             height: 500px;
-            width: 800px;
+            width: 100%;
         }
-        #container {
-            min-width: 500px;
-            max-width: 800px;
+
+        .chart {
             height: 400px;
         }
     </style>
 </head>
 <body>
-    <h1 id="track-name"></h1>
+    <h3 id="track-name"></h3>
+
+    <p>Total distance: <span id="totalDistance"></span> km</p>
 
     <div id="map"></div>
 
-    <div id="container"></div>
+    <div class="chart" id="altitude"></div>
+
+    <div class="chart" id="groundSpeed"></div>
 
     <script src="js/lib/gpx-parser.js"></script>
     <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
@@ -70,21 +73,60 @@
                 let gpx = new gpxParser();
                 gpx.parse(gpxData);
 
-                console.log(gpx.tracks[0].name);
-
                 document.getElementById("track-name").innerText = gpx.tracks[0].name;
+
+                document.getElementById("totalDistance").innerText = (gpx.tracks[0].distance.total / 1000).toFixed(3);
 
                 drawTrack(gpx.tracks[0]);
                 drawAltitudeChart(gpx.tracks[0]);
+                drawGroundSpeedChart(getGroundSpeedData(gpx.tracks[0]));
             });
     </script>
 
     <script>
+        /**
+         * Returns an array of time - ground speed for each track point (that has a time value).
+         *
+         * @param track
+         */
+        function getGroundSpeedData(track) {
+            let result = [];
+
+            let gpx = new gpxParser();
+
+            let points = track.points.filter(p => p.time !== null);
+
+            let previousPoint = null;
+
+            for (let i = 0; i < points.length; i++) {
+                let point = points[i];
+
+                if (previousPoint) {
+                    // in seconds
+                    let time = Math.abs(point.time - previousPoint.time) / 1000;
+
+                    if (time < 5) { continue; }
+
+                    // in nm (nautical miles)
+                    let distance = gpx.calcDistanceBetween(previousPoint, point) * (0.539957);
+
+                    let speedInKmPerHour = ((distance / time) * 3600) / 1000;
+
+                    result.push([point.time.getTime(), speedInKmPerHour]);
+                }
+
+                previousPoint = point;
+            }
+
+            return result;
+        }
+
         function drawAltitudeChart(track) {
 
             let dataPoints = track.points.filter(p => p.time !== null).map(p => [p.time, p.ele * 3.28084]);
 
-            Highcharts.chart('container', {
+            console.log(dataPoints);
+            Highcharts.chart('altitude', {
                 chart: {
                     type: 'area'
                 },
@@ -96,7 +138,7 @@
                 },
                 xAxis: {
                     type: 'datetime',
-                    dateTimeLabelFormats: { // don't display the dummy year
+                    dateTimeLabelFormats: {
                         month: '%e. %b',
                         year: '%b'
                     },
@@ -124,11 +166,58 @@
 
                 colors: ['#6CF', '#39F', '#06C', '#036', '#000'],
 
-                // Define the data points. All series have a dummy year
-                // of 1970/71 in order to be compared on the same x axis. Note
-                // that in JavaScript, months start at 0 for January, 1 for February etc.
                 series: [{
                     name: "Altitude (ft)",
+                    data: dataPoints
+                }]
+            });
+        };
+
+        function drawGroundSpeedChart(dataPoints) {
+            console.log(dataPoints);
+
+            Highcharts.chart('groundSpeed', {
+                chart: {
+                    type: 'area'
+                },
+                title: {
+                    text: 'Ground speed (kts)'
+                },
+                subtitle: {
+                    text: 'Ground speed'
+                },
+                xAxis: {
+                    type: 'datetime',
+                    dateTimeLabelFormats: {
+                        month: '%e. %b',
+                        year: '%b'
+                    },
+                    title: {
+                        text: 'Date'
+                    }
+                },
+                yAxis: {
+                    title: {
+                        text: 'Ground speed (kts)'
+                    }
+                },
+                tooltip: {
+                    headerFormat: '<b>{series.name}</b><br>',
+                    pointFormat: '{point.x:%e. %b %H:%M}: {point.y:.2f} kts'
+                },
+
+                plotOptions: {
+                    spline: {
+                        marker: {
+                            enabled: true
+                        }
+                    }
+                },
+
+                colors: ['#6CF', '#39F', '#06C', '#036', '#000'],
+
+                series: [{
+                    name: "Ground speed (kts)",
                     data: dataPoints
                 }]
             });
