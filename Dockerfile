@@ -1,11 +1,11 @@
 FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build
 WORKDIR /app
 
-COPY src/*.sln
-COPY src/Mapper/*.csproj ./Mapper
+COPY src/*.sln .
+COPY src/Mapper/*.csproj ./Mapper/
 RUN dotnet restore
 
-COPY src/Mapper/. ./Mapper
+COPY src/Mapper/. ./Mapper/
 WORKDIR /app/Mapper
 RUN dotnet publish -c Release -o out
 
