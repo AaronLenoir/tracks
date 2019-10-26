@@ -134,54 +134,54 @@
 
             let dataPoints = track.points.filter(p => p.time !== null).map(p => [p.time, p.ele * 3.28084]);
 
-            console.log(dataPoints);
-            Highcharts.chart('altitude', {
-                chart: {
-                    type: 'area'
-                },
-                title: {
-                    text: 'Altitude (ft)'
-                },
-                subtitle: {
-                    text: 'Altitude en route'
-                },
-                xAxis: {
-                    type: 'datetime',
-                    dateTimeLabelFormats: {
-                        month: '%e. %b',
-                        year: '%b'
-                    },
-                    title: {
-                        text: 'Date'
-                    }
-                },
-                yAxis: {
-                    title: {
-                        text: 'Altitude (ft)'
-                    }
-                },
-                tooltip: {
-                    headerFormat: '<b>{series.name}</b><br>',
-                    pointFormat: '{point.x:%e. %b %H:%M}: {point.y:.2f} ft'
-                },
+console.log(dataPoints);
+Highcharts.chart('altitude', {
+    chart: {
+        type: 'area'
+    },
+    title: {
+        text: 'Altitude (ft)'
+    },
+    subtitle: {
+        text: 'Altitude en route'
+    },
+    xAxis: {
+        type: 'datetime',
+        dateTimeLabelFormats: {
+            month: '%e. %b',
+            year: '%b'
+        },
+        title: {
+            text: 'Date'
+        }
+    },
+    yAxis: {
+        title: {
+            text: 'Altitude (ft)'
+        }
+    },
+    tooltip: {
+        headerFormat: '<b>{series.name}</b><br>',
+        pointFormat: '{point.x:%e. %b %H:%M}: {point.y:.2f} ft'
+    },
 
-                plotOptions: {
-                    spline: {
-                        marker: {
-                            enabled: true
-                        }
-                    }
-                },
+    plotOptions: {
+        spline: {
+            marker: {
+                enabled: true
+            }
+        }
+    },
 
-                colors: ['#6CF', '#39F', '#06C', '#036', '#000'],
+    colors: ['#6CF', '#39F', '#06C', '#036', '#000'],
 
-                series: [{
-                    name: "Altitude (ft)",
-                    data: dataPoints
-                }],
+    series: [{
+        name: "Altitude (ft)",
+        data: dataPoints
+    }],
 
-                time: { useUTC: false }
-            });
+    time: { useUTC: false }
+});
         };
 
         function drawGroundSpeedChart(dataPoints) {
